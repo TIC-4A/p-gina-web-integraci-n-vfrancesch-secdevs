@@ -1,0 +1,165 @@
+******************************************************************************
+*      Segundo Parcial SSL Curso K2006 29 de noviembre de 2022 – TEMA A      *
+******************************************************************************
+
+1. Dada la siguiente gramática:
+   S -> nA | rT
+   T -> a | b
+   A -> c
+   Indique si se trata de una gramática LL(1) justificando.
+
+Sí, es LL(1). Observamos que todas las producciones son no recursivas y no
+tienen ε-producciones. No genera gramáticas ambiguas.
+
+-------------------------------------------------------------------------------
+2. El análisis sintáctico
+   a. El análisis sintáctico LL se usa en el ASDR
+   b. El análisis sintáctico LL se usa en el AAS
+   c. LL(2) es un scanner predictivo
+
+a: verdadero. El análisis LL puede implementarse en ASDR. Aunque me hace ruido
+   que diga "análisis sintáctico LL" y tuviera trampa.
+b: falso.
+c: falso - LL(2) se refiere a un parser predictivo con 2 tokens de lookahead,
+   no a un scanner.
+
+-------------------------------------------------------------------------------
+3. Responda V-F y justifique
+   a. Lex(flex) lee token representados por ER para implementar un scanner
+
+Falso. Flex utiliza ER (AF) para leer caracteres, reconocer lexemas, y producir
+tokens.
+
+-------------------------------------------------------------------------------
+4. Tabla de símbolos (Responda V-F y justifique)
+   a. Puede contener identificadores; detalle que atributos almacena
+   b. Nunca contiene identificadores, Justifique
+   c. Puede contener constantes.
+   d. Debe implementarse siempre en disco. Justifique
+
+Verdadero: a
+Nombre del identificador, tipo (int, float, etc), scope, clase (variable, 
+función, parámetro, etc), número de línea donde se declaró, etc.
+
+-------------------------------------------------------------------------------
+5. En un árbol de derivación
+   a. Cada hoja es un NO TERMINAL
+   b. Cada nodo interior es un TERMINAL
+   c. La derivación solo puede implementarse en forma horizontal y vertical
+   d. Cada hoja es un terminal
+
+Verdadero: d
+
+-------------------------------------------------------------------------------
+6. Análisis sintáctico - diga si es V o F justificando cualquiera de las dos
+   a. Detecta lexemas y los LR a los que pertenecen. Justifique
+
+a. Falso - La detección de lexemas corresponde al análisis léxico (scanner),
+no al sintáctico.
+
+-------------------------------------------------------------------------------
+7. Cuales son dos de las posibles soluciones para reconocer las PR. Justifique
+
+Para reconocer palabras reservadas:
+* utilizar un hashtable,
+* listarlas explícitamente en el scanner (p.ej. en flex).
+
+-------------------------------------------------------------------------------
+8. struct(double x,y,jp;
+   Liste los caracteres que deberá devolver con el ungetc
+
+No lo tengo claro.
+
+La expresión está mal formada, falta el nombre de la estructura, utiliza
+paréntesis en lugar de llaves, comas en vez de punto y coma para separar
+propiedades, y además no se cierra el paréntesis.
+
+ungetc se usa en análisis léxico para retroceder cuando se leyó de más.
+
+
+******************************************************************************
+*      Segundo Parcial SSL Curso K2006 29 de noviembre de 2022 – TEMA B      *
+******************************************************************************
+
+1. Dada la siguiente gramática:
+   S -> nA | rT
+   T -> a | b
+   A -> c
+   Escriba un PAS para la producción S.
+
+void S() {
+    if (lookahead == 'n') {
+        match('n');
+        A();
+    } else if (lookahead == 'r') {
+        match('r');
+        T();
+    } else {
+        error("Esperado 'n' o 'r'");
+    }
+}
+
+-------------------------------------------------------------------------------
+2. Responda V-F y justifique
+   • Declarar una variable dentro de una función más de una vez es un error
+   léxico.
+
+Falso. Declarar una variable más de una vez en una función es un error
+semántico (duplicado en el ámbito), no léxico. El lexer solo identifica
+tokens (p.ej. "int x; int x;"), pero el error se detecta en la fase semántica
+al insertar en la tabla de símbolos y chequear colisiones.
+
+-------------------------------------------------------------------------------
+3. Que significa que una gramática sea ambigua? Como demuestro que no es
+   ambigua? Nombre un algorítmos que lo demuestre
+
+Una gramática es ambigua si una cadena del lenguaje tiene más de un árbol de
+derivación.
+No existe un algoritmo para demostrar que no es ambigua. Pero si una gramática
+es LL(k) o LR(k), entonces es no ambigua.
+
+-------------------------------------------------------------------------------
+4. Declarar una variable dentro de una función más de una vez es un error
+   léxico.
+
+Repetida, ver ejercicio 2 más arriba.
+
+-------------------------------------------------------------------------------
+5. El analizador semántico se ocupa de comprobar que las expresiones y
+   sentencias estén bien formadas de acuerdo a la gramática.
+
+Falso: eso es tarea del analizador sintáctico (parser), que verifica la
+estructura según la gramática.
+El semántico chequea reglas contextuales como tipos, ámbitos y compatibilidad
+(p.ej. suma de int+string inválida, aunque sintácticamente está ok).
+
+-------------------------------------------------------------------------------
+6. Cuantos y cuales tokens encuentra en: double d=1;
+   Debería utilizar unget? Cuantas veces?
+
+Cantidad de tokens: 5. Son "double", "d", "=", "1" y ";".
+Uso de ungetc: no estoy seguro. Creo que no se necesita.
+
+-------------------------------------------------------------------------------
+7. Tilde todas las afirmaciones verdaderas con respecto a un archivo
+   Lex(archivo.l)
+   □ Puede contener reglas.
+   □ Puede contener acciones.
+   □ Puede contener condiciones.
+   □ Puede contener partes en lenguaje C.
+   □ Puede contener partes en notación RegEx.
+
+Todas verdaderas.
+✓ Puede contener reglas. Son pares de la forma "patrón { acción }"
+  P.ej. "[0-9]+    { return NUM; }"
+✓ Puede contener acciones. (Se implementan con código en C)
+  P.ej. "[a-zA-Z_][a-zA-Z0-9_]*  { printf("Identificador: %s\n", yytext); }"
+✓ Puede contener condiciones. (Estados como <INITIAL>, <COMMENT>)
+✓ Puede contener partes en lenguaje C. (Funciones auxiliares)
+✓ Puede contener partes en notación RegEx. (ER para patrones)
+
+-------------------------------------------------------------------------------
+8. Las restricciones semánticas de lvalue pueden formalizarse con GIC.
+   Responda V-F y justifique
+
+No lo sé.
